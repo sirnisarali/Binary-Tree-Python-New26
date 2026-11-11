@@ -1,0 +1,91 @@
+class TreeNode:
+    def __init__(self, data=None, leftPointer=-1, rightPointer=-1):
+        self.data = data
+        self.leftPointer = leftPointer
+        self.rightPointer = rightPointer
+
+# Global Declaration
+Tree = [TreeNode() for _ in range(5)]
+rootPointer = -1
+freePtr = 0
+exitMenu = False
+
+def Initialise():
+    global freePtr
+    for i in range(4):
+        Tree[i].leftPointer = i + 1
+        Tree[i].rightPointer = -1
+    Tree[4].leftPointer = -1
+    freePtr = 0
+
+def Insert(newItem):
+    global rootPointer, freePtr
+    previousNodePtr = 0
+    turnedLeft = False
+    if freePtr != -1:
+        newNodePtr = freePtr
+        freePtr = Tree[freePtr].leftPointer
+        Tree[newNodePtr].data = newItem
+        Tree[newNodePtr].leftPointer = -1
+        Tree[newNodePtr].rightPointer = -1
+
+        if rootPointer == -1:
+            rootPointer = newNodePtr
+        else:
+            thisNodePtr = rootPointer
+            while thisNodePtr != -1:
+                previousNodePtr = thisNodePtr
+                if Tree[thisNodePtr].data > newItem:
+                    turnedLeft = True
+                    thisNodePtr = Tree[thisNodePtr].leftPointer
+                else:
+                    turnedLeft = False
+                    thisNodePtr = Tree[thisNodePtr].rightPointer
+            if turnedLeft:
+                Tree[previousNodePtr].leftPointer = newNodePtr
+            else:
+                Tree[previousNodePtr].rightPointer = newNodePtr
+    else:
+        print("Tree is full..")
+
+def Find(searchValue):
+    thisNodePtr = rootPointer
+    while thisNodePtr != -1 and Tree[thisNodePtr].data != searchValue:
+        if Tree[thisNodePtr].data > searchValue:
+            thisNodePtr = Tree[thisNodePtr].leftPointer
+        else:
+            thisNodePtr = Tree[thisNodePtr].rightPointer
+    return thisNodePtr
+
+
+def OutputAll():
+    print(f"Root Node:{rootPointer}")
+    print("\nIndex | Data | LeftPointer | RightPointer")
+    for i in range(5):
+        print(f"{i:4} | {str(Tree[i].data):5} | {Tree[i].leftPointer:11} | {Tree[i].rightPointer:12}")
+
+
+def main():
+    global exitMenu
+    Initialise()
+    while not exitMenu:
+        print("BINARY TREE MENU:")
+        print("Select Choice from the given options:")
+        choice = int(input("Insert(1)- Find(2)- Exit(3):"))
+        if choice == 1:
+            newItem = int(input("Enter number to insert: "))
+            Insert(newItem)
+        elif choice == 2:
+            searchValue = int(input("Enter number to find: "))
+            ans = Find(searchValue)
+            if ans != -1:
+                print("Found at index ", ans)
+            else:
+                print("Not Found..")
+        else:
+            exitMenu = True
+        OutputAll()
+
+
+if __name__ == "__main__":
+    main()
